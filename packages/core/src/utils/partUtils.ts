@@ -139,7 +139,6 @@ export async function flatMapTextParts(
     }
   }
   return result;
-}
 
 /**
  * Appends a string of text to the last text part of a prompt, or adds a new
@@ -150,6 +149,21 @@ export async function flatMapTextParts(
  * @param separator The separator to add between existing text and the new text.
  * @returns The modified prompt.
  */
+  export function isFunctionCall(parts: Part[]) {
+  return (
+    Array.isArray(parts) &&
+    parts.length > 0 &&
+    parts.some((p) => p.functionCall !== undefined)
+  );
+}
+
+export function isFunctionResponse(parts: Part[]) {
+  return (
+    Array.isArray(parts) &&
+    parts.length > 0 &&
+    parts.some((p) => p.functionResponse !== undefined)
+  );
+}
 export function appendToLastTextPart(
   prompt: PartUnion[],
   textToAppend: string,
