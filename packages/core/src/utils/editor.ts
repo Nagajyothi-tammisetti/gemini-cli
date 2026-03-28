@@ -294,18 +294,19 @@ export async function openDiff(
   newPath: string,
   editor: EditorType,
 ): Promise<void> {
-  const diffCommand = getDiffCommand(oldPath, newPath, editor);
-  if (!diffCommand) {
-    debugLogger.error('No diff tool available. Install a supported editor.');
-    return;
-  }
+ const diffCommand = getDiffCommand(oldPath, newPath, editor);
+if (!diffCommand) {
+  debugLogger.error('No diff tool available...');
+  return;
+}
 
-  if (isTerminalEditor(editor)) {
-    try {
-      if (!commandExists(diffCommand.command)) {
+// ✅ Move check here (for ALL editors)
+if (!commandExists(diffCommand.command)) {
   throw new Error(`Editor command not found: ${diffCommand.command}`);
 }
 
+if (isTerminalEditor(editor)) {
+  try {
 const result = spawnSync(diffCommand.command, diffCommand.args, {
   stdio: 'inherit',
 });
