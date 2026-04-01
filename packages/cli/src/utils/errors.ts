@@ -3,7 +3,7 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import fs from 'fs';
 import type { Config } from '@google/gemini-cli-core';
 import {
   OutputFormat,
@@ -88,8 +88,9 @@ export function handleError(
       stats: streamFormatter.convertToStreamStats(metrics, 0),
     });
 
-    runSyncCleanup();
-    process.exit(getNumericExitCode(errorCode));
+  runSyncCleanup();
+fs.writeSync(2, errorMessage + '\n');
+process.exit(getNumericExitCode(errorCode));
   } else if (config.getOutputFormat() === OutputFormat.JSON) {
     const formatter = new JsonFormatter();
     const errorCode = customErrorCode ?? extractErrorCode(error);
@@ -101,8 +102,9 @@ export function handleError(
     );
 
     coreEvents.emitFeedback('error', formattedError);
-    runSyncCleanup();
-    process.exit(getNumericExitCode(errorCode));
+   runSyncCleanup();
+fs.writeSync(2, errorMessage + '\n');
+process.exit(getNumericExitCode(errorCode));
   } else {
     throw error;
   }
@@ -156,6 +158,7 @@ export function handleToolError(
       coreEvents.emitFeedback('error', errorMessage);
     }
     runSyncCleanup();
+    fs.writeSync(2, errorMessage + '\n');
     process.exit(toolExecutionError.exitCode);
   }
 
@@ -182,8 +185,9 @@ export function handleCancellationError(config: Config): never {
       },
       stats: streamFormatter.convertToStreamStats(metrics, 0),
     });
-    runSyncCleanup();
-    process.exit(cancellationError.exitCode);
+   runSyncCleanup();
+fs.writeSync(2, cancellationError.message + '\n');
+process.exit(cancellationError.exitCode);
   } else if (config.getOutputFormat() === OutputFormat.JSON) {
     const formatter = new JsonFormatter();
     const formattedError = formatter.formatError(
@@ -193,12 +197,14 @@ export function handleCancellationError(config: Config): never {
     );
 
     coreEvents.emitFeedback('error', formattedError);
-    runSyncCleanup();
-    process.exit(cancellationError.exitCode);
+   runSyncCleanup();
+fs.writeSync(2, cancellationError.message + '\n');
+process.exit(cancellationError.exitCode);
   } else {
     coreEvents.emitFeedback('error', cancellationError.message);
     runSyncCleanup();
-    process.exit(cancellationError.exitCode);
+fs.writeSync(2, cancellationError.message + '\n');
+process.exit(cancellationError.exitCode);
   }
 }
 
@@ -224,7 +230,8 @@ export function handleMaxTurnsExceededError(config: Config): never {
       stats: streamFormatter.convertToStreamStats(metrics, 0),
     });
     runSyncCleanup();
-    process.exit(maxTurnsError.exitCode);
+fs.writeSync(2, maxTurnsError.message + '\n');
+process.exit(maxTurnsError.exitCode);
   } else if (config.getOutputFormat() === OutputFormat.JSON) {
     const formatter = new JsonFormatter();
     const formattedError = formatter.formatError(
@@ -234,11 +241,14 @@ export function handleMaxTurnsExceededError(config: Config): never {
     );
 
     coreEvents.emitFeedback('error', formattedError);
+   
     runSyncCleanup();
-    process.exit(maxTurnsError.exitCode);
+fs.writeSync(2, maxTurnsError.message + '\n');
+process.exit(maxTurnsError.exitCode);
   } else {
     coreEvents.emitFeedback('error', maxTurnsError.message);
     runSyncCleanup();
-    process.exit(maxTurnsError.exitCode);
+fs.writeSync(2, maxTurnsError.message + '\n');
+process.exit(maxTurnsError.exitCode);
   }
 }
